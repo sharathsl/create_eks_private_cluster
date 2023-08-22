@@ -12,7 +12,7 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  cluster_name = "education-eks-${random_string.suffix.result}"
+  cluster_name = "petclinic-eks-${random_string.suffix.result}"
 }
 
 resource "random_string" "suffix" {
@@ -24,7 +24,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "5.0.0"
 
-  name = "education-vpc"
+  name = "petclinic-vpc"
 
   cidr = "10.0.0.0/16"
   azs  = slice(data.aws_availability_zones.available.names, 0, 3)
@@ -56,7 +56,7 @@ module "eks" {
 
   vpc_id                         = module.vpc.vpc_id
   subnet_ids                     = module.vpc.private_subnets
-  cluster_endpoint_public_access = true
+#  cluster_endpoint_public_access = true
 
 #   eks_managed_node_group_defaults = {
 #     ami_type = "ami-04e35eeae7a7c5883"
