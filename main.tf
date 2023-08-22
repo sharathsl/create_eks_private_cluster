@@ -56,12 +56,6 @@ module "eks" {
 
   vpc_id                         = module.vpc.vpc_id
   subnet_ids                     = module.vpc.private_subnets
-#  cluster_endpoint_public_access = true
-
-#   eks_managed_node_group_defaults = {
-#     ami_type = "ami-04e35eeae7a7c5883"
-
-#   }
 
   eks_managed_node_groups = {
     one = {
