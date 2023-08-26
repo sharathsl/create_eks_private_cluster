@@ -1,0 +1,36 @@
+resource "aws_iam_policy" "node_efs_policy" {
+  name        = "eks-efs"
+  path        = "/"
+  description = "Policy for EFKS nodes to use EFS"
+
+  policy = jsonencode({
+    "Statement": [
+        {
+            "Action": [
+                "elasticfilesystem:DescribeMountTargets",
+                "elasticfilesystem:DescribeFileSystems",
+                "elasticfilesystem:DescribeAccessPoints",
+                "elasticfilesystem:CreateAccessPoint",
+                "elasticfilesystem:DeleteAccessPoint",
+                "ec2:DescribeAvailabilityZones"
+            ],
+            "Effect": "Allow",
+            "Resource": "*",
+            "Sid": ""
+        }
+    ],
+    "Version": "2012-10-17"
+}
+  )
+}
+
+resource "aws_efs_file_system" "kube" {
+  creation_token = "eks-efs"
+}
+
+resource "aws_efs_mount_target" "mount" {
+    file_system_id = aws_efs_file_system.kube.id
+    subnet_ids = each.private_subnets
+    
+    depends_on = [ aws_eks_cluster.eks_cluster ]
+}
