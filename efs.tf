@@ -29,8 +29,20 @@ resource "aws_efs_file_system" "kube" {
 }
 
 resource "aws_efs_mount_target" "mount" {
-    file_system_id = aws_efs_file_system.kube.id
-    subnet_ids = each.private_subnets
-    
-    depends_on = [ aws_eks_cluster.eks_cluster ]
+  file_system_id = aws_efs_file_system.kube.id
+  count = length(module.vpc.private_subnets)
+  subnet_id = module.vpc.private_subnets[count.index]
+
+  depends_on = [ module.eks]
+
 }
+
+
+
+# resource "aws_efs_mount_target" "mount" {
+#     file_system_id = aws_efs_file_system.kube.id
+#     subnet_id = module.vpc.private_subnets
+#     for_each = toset(module.vpc.private_subnets )
+    
+#     depends_on = [ module.eks]
+# }

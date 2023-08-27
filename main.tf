@@ -2,8 +2,6 @@ provider "aws" {
   region = var.region
 }
 
-# Filter out local zones, which are not currently supported 
-# with managed node groups
 data "aws_availability_zones" "available" {
   filter {
     name   = "opt-in-status"
@@ -11,18 +9,19 @@ data "aws_availability_zones" "available" {
   }
 }
 
-locals {
-  cluster_name = "petclinic-eks-${random_string.suffix.result}"
-}
+# locals {
+#    cluster_name = "petclinic-eks-${random_string.suffix.result}"
+#    cluster_name = "petclinic-eks"
+# }
 
-resource "random_string" "suffix" {
-  length  = 8
-  special = false
-}
+# resource "random_string" "suffix" {
+#   length  = 8
+#   special = false
+# }
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "5.1.1"
+  version = "4.0.2"
 
   name = "petclinic-vpc"
 
@@ -37,12 +36,12 @@ module "vpc" {
   enable_dns_hostnames = true
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/elb"                      = 1
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/internal-elb"             = 1
   }
 }
@@ -51,7 +50,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.16.0"
 
-  cluster_name    = local.cluster_name
+  cluster_name    = var.cluster_name
   cluster_version = "1.23"
 
   vpc_id                         = module.vpc.vpc_id
@@ -81,9 +80,10 @@ module "eks" {
 }
 
 module "efs_csi_driver" {
-  source = "git::https://github.com/DNXLabs/terraform-aws-eks-efs-csi-driver.git"
+  #source = "git::https://github.com/DNXLabs/terraform-aws-eks-efs-csi-driver.git"
+  source = "git::https://github.com/sharathsl/efs-csi-driver.git"
 
-  cluster_name                     = module.eks_cluster.cluster_id
-  cluster_identity_oidc_issuer     = module.eks_cluster.cluster_oidc_issuer_url
-  cluster_identity_oidc_issuer_arn = module.eks_cluster.oidc_provider_arn
+  cluster_name                     = module.eks.cluster_id
+  cluster_identity_oidc_issuer     = module.eks.cluster_oidc_issuer_url
+  cluster_identity_oidc_issuer_arn = module.eks.oidc_provider_arn
 }
