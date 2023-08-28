@@ -9,15 +9,15 @@ data "aws_availability_zones" "available" {
   }
 }
 
-# locals {
-#    cluster_name = "petclinic-eks-${random_string.suffix.result}"
-#    cluster_name = "petclinic-eks"
-# }
+locals {
+   cluster_name = "petclinic-eks-${random_string.suffix.result}"
+   cluster_name = "petclinic-eks"
+}
 
-# resource "random_string" "suffix" {
-#   length  = 8
-#   special = false
-# }
+resource "random_string" "suffix" {
+  length  = 8
+  special = false
+}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
@@ -36,12 +36,12 @@ module "vpc" {
   enable_dns_hostnames = true
 
   public_subnet_tags = {
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "kubernetes.io/cluster/petclinic-eks" = "shared"
     "kubernetes.io/role/elb"                      = 1
   }
 
   private_subnet_tags = {
-    "kubernetes.io/cluster/${var.cluster_name}" = "shared"
+    "kubernetes.io/cluster/petclinic-eks" = "shared"
     "kubernetes.io/role/internal-elb"             = 1
   }
 }
@@ -50,7 +50,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.16.0"
 
-  cluster_name    = var.cluster_name
+  cluster_name    = "petclinic-eks"
   cluster_version = "1.23"
 
   vpc_id                         = module.vpc.vpc_id
@@ -79,11 +79,29 @@ module "eks" {
   }
 }
 
-module "efs_csi_driver" {
-  #source = "git::https://github.com/DNXLabs/terraform-aws-eks-efs-csi-driver.git"
-  source = "git::https://github.com/sharathsl/efs-csi-driver.git"
+# module "efs_csi_driver" {
+#   #source = "git::https://github.com/DNXLabs/terraform-aws-eks-efs-csi-driver.git"
+#   source = "git::https://github.com/sharathsl/efs-csi-driver.git"
 
-  cluster_name                     = module.eks.cluster_id
-  cluster_identity_oidc_issuer     = module.eks.cluster_oidc_issuer_url
-  cluster_identity_oidc_issuer_arn = module.eks.oidc_provider_arn
-}
+#   cluster_name                     = module.eks.cluster_id
+#   cluster_identity_oidc_issuer     = module.eks.cluster_oidc_issuer_url
+#   cluster_identity_oidc_issuer_arn = module.eks.oidc_provider_arn
+# }
+
+# provider "kubectl" {
+#   config_path            = "~/.kube/config"
+#   host                   = module.eks.cluster.endpoint
+#   cluster_ca_certificate = base64decode(module.eks.certificate_authority.0.data)
+#   token                  = module.eks_auth.cluster.token
+#   load_config_file       = false
+# }
+
+# provider "helm" {
+#   kubernetes {
+#     config_path = "~/.kube/config"
+#     host                   = module.eks.cluster.endpoint
+#     cluster_ca_certificate = base64decode(module.eks.cluster.certificate_authority.0.data)
+#     token                  = module.eks.cluster.token
+#     load_config_file       = false
+#   }
+# }
