@@ -1,7 +1,7 @@
-# output "cluster_endpoint" {
-#   description = "Endpoint for EKS control plane"
-#   value       = module.eks.cluster_endpoint
-# }
+output "cluster_endpoint" {
+  description = "Endpoint for EKS control plane"
+  value       = module.eks.cluster_endpoint
+}
 
 output "cluster_security_group_id" {
   description = "Security group ids attached to the cluster control plane"
@@ -13,7 +13,7 @@ output "region" {
   value       = var.region
 }
 
-output "cluster_name" {
-  description = "Kubernetes Cluster Name"
-  value       = "petclinic-eks"
-}
+# output "cluster_name" {
+#   description = "Kubernetes Cluster Name"
+#   value       = var.cluster_name
+# }
