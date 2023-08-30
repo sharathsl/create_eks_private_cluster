@@ -7,7 +7,7 @@
   ClusterRoleBinding required to bind efs with eks cluster.
 - Deployment file should have code to create storageclass, pv and pvc.
 **Example:**
-<sub>
+```
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -47,7 +47,7 @@ spec:
   resources:
     requests:
       storage: 2Gi
-  </sub>
+```
 
 NOTE: This will create EBS volume in single az, If the worker node post restart comes up on a different az other than where your EBS volume is, then MySQL pod won't come up.
 
