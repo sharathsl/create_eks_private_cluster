@@ -33,7 +33,7 @@ metadata:
 provisioner: efs.csi.aws.com
 parameters:
   provisioningMode: efs-ap
-  fileSystemId: fs-0a17c15206714bd2a
+  fileSystemId: fs-0a17c15206714bd2a  ##You will get this ID post successful EFS creation, this is manual task.
   directoryPerms: "777"
 
 ---
@@ -50,6 +50,9 @@ spec:
       storage: 2Gi
 ```
 
-NOTE: This will create EBS volume in single az, If the worker node post restart comes up on a different az other than where your EBS volume is, then MySQL pod won't come up.
+NOTE: This will create EFS and multiple mount targets for each AZ, If your worker node restarts and comes up on a different AZ, mysql pod will still be able to access the data, since EFS is avaialble across all AZ's.
 
-Reference: https://github.com/hashicorp/learn-terraform-provision-eks-cluster/blob/main/main.tf
+Reference: 
+- https://github.com/hashicorp/learn-terraform-provision-eks-cluster/blob/main/
+- https://andrewtarry.com/posts/aws-kubernetes-with-efs/
+
