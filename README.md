@@ -8,7 +8,7 @@
 - Deployment file should have code to create storageclass, pv and pvc.
 **Example:**
   <sub>
-  apiVersion: v1
+apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: efs-pv
