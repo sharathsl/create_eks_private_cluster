@@ -6,6 +6,7 @@
 - Post cluster is alive, run kubectl apply -f efs-csi-driver.yaml. This will install the driver, will create ClusterRole,   
   ClusterRoleBinding required to bind efs with eks cluster.
 - Deployment file should have code to create storageclass, pv and pvc.
+
 **Example:**
 ```
 apiVersion: v1
