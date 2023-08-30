@@ -7,7 +7,7 @@
   ClusterRoleBinding required to bind efs with eks cluster.
 - Deployment file should have code to create storageclass, pv and pvc.
 **Example:**
-  <sub>
+<sub>
 apiVersion: v1
 kind: PersistentVolume
 metadata:
